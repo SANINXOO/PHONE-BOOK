@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+        }
+
+        .inputs {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #frm {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        input[type="text"] {
+            width: 300px;
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #main {
+            margin: 20px;
+        }
+
+        .card {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin: 10px 0;
+            padding: 10px;
+        }
+
+        .details-main {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .btns {
+            margin-top: 10px;
+        }
+
+        button.edit {
+            background-color: #28a745;
+        }
+
+        button.delete {
+            background-color: #dc3545;
+        }
+    </style>  
+</head>
+<body>
+    <h2>Contact Book</h2>
+   <div class="inputs">
+   <form action="" id="frm">
+     <input type="text" placeholder="Enter the name" id="inp-name">
+    <input type="text" placeholder="Phone number" id="inp-number">
+    <button id="btn">Submit</button>
+   </form>
+   </div>
+    <div id="main">
+        <!-- <div class="card">
+            <div class="details-main">
+                <p>Name: John Doe</p>
+                <p>Number: 1234567890</p>
+                <div class="btns">
+                    <button class="edit">EDIT</button>
+                    <button>DELETE</button>
+                </div>
+            </div>
+        </div> -->
+    </div>
+
+    <script>
+       document.getElementById("frm"),addEventListener("submit",async (e)=>{
+        e.preventDefault();
+        let Name=document.getElementById("inp-name").value;
+        let Numberr=document.getElementById("inp-number").value;
+            fetch("http://localhost:3040/api/addtask",{
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                body:JSON.stringify({
+                    name:Name,
+                    number:Numberr
+                })
+            }).then((res)=>{
+                console.log((res.status));
+                if(res.status==201){
+                    alert("Data Added")
+                }
+                else{
+                    alert("Data is Not Added")
+                }
+            }).catch((error)=>{
+                console.log(error);
+            })
+            
+            // function show(id){
+            // value=id
+            // alert(value)
+        })
+       function delTodo(id)
+        {
+            fetch(`http://localhost:3040/api/deltask/${id}`,{
+                method:"DELETE",
+            }).then((data)=>{
+                if(data.status==200)
+                {
+                    alert("delete")
+                }
+                else{
+                    alert("error")
+                }
+                getTodo();
+            }).catch((error)=>{
+                console.log(error);
+            
+            })
+        }
+        async function getTodo()
+            {
+                const task=await fetch("http://localhost:3040/api/gettask");
+                // console.log(task);
+                const data=await task.json();
+                console.log(data);
+                s="";
+                data.map(dt=>{
+                    s+=`<div class="card">
+            <div class="details-main">
+                <p>Name: ${dt.name}</p>
+                <p>Number: ${dt.number}</p>
+                <div class="btns">
+                    <button class="edit">EDIT</button>
+                    <button onclick="delTodo('${dt._id}')">DELETE</button>
+                </div>
+            </div>
+        </div>`
+                })
+                document.getElementById("main").innerHTML=s;
+            }
+            getTodo();
+
+        
+
+        
+    </script>
+</body>
+</html>
